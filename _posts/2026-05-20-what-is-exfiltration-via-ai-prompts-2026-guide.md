@@ -51,7 +51,7 @@ The primary exfiltration vectors in active use include:
 
 The role of agentic AI deserves particular emphasis. As AI tools gain the ability to read files, call APIs, send emails, and browse the web autonomously, the attack surface for AI-driven exfiltration risks expands from a single prompt exchange to a multi-step automated workflow. Each tool capability is a potential write path for exfiltrated data.
 
-![Developer monitors AI agent file activity](https://csuxjmfbwmkxiegfpljm.supabase.co/storage/v1/object/public/blog-images/organization-32226/1779252437160_Developer-monitors-AI-agent-file-activity.jpeg)
+![Developer monitors AI agent file activity](/assets/img/what-is-exfiltration-via-ai-prompts-2026-guide-2.jpg)
 
 ## Why detection and prevention are harder than they look
 
@@ -95,7 +95,7 @@ Effective mitigation requires layered controls applied at multiple points in the
 
 [Combining prompt filtering with strict egress policies](https://zylos.ai/research/2026-04-12-indirect-prompt-injection-defenses-agents-untrusted-content) and structural separation of trusted versus untrusted content flows is the current practitioner consensus for robust exfiltration mitigation. Point fixes like URL sanitization can rapidly reduce the attack surface while longer-term model hardening is developed.
 
-![Infographic with four steps for AI prompt exfiltration defense](https://csuxjmfbwmkxiegfpljm.supabase.co/storage/v1/object/public/blog-images/organization-32226/1779252534562_Infographic-with-four-steps-for-AI-prompt-exfiltration-defense.jpeg)
+![Infographic with four steps for AI prompt exfiltration defense](/assets/img/what-is-exfiltration-via-ai-prompts-2026-guide-3.jpg)
 
 ## Advanced and emerging exfiltration methods to watch
 
@@ -127,7 +127,7 @@ The arms race will intensify as AI tools become more autonomous. Security teams 
 
 One attack surface that often goes unexamined is the text itself being pasted into AI tools. Invisible Unicode characters, zero-width spaces, and AI-generated debris embedded in copied text can carry injection payloads that survive even careful manual review. Understanding [invisible text in LLM inputs](https://acepaste.xyz/blog/invisible-text-llm.html) is a prerequisite for any serious prompt hygiene program.
 
-![https://acepaste.xyz](https://csuxjmfbwmkxiegfpljm.supabase.co/storage/v1/object/public/blog-images/organization-32226/1779252253976_acepaste.jpg)
+![https://acepaste.xyz](/assets/img/what-is-exfiltration-via-ai-prompts-2026-guide-4.jpg)
 
 Acepaste Cleaner Pro runs entirely on-device, stripping invisible Unicode characters and AI debris from text before it reaches the model. The Chrome extension auto-scans every page you visit and strips hidden characters on every copy action, removing a class of injection vectors that most enterprise security stacks never address. For security teams building layered AI prompt security controls, [clean prompt inputs](https://acepaste.xyz) are a foundational layer. Explore Acepaste as part of your defense-in-depth strategy against AI data exfiltration.
 
