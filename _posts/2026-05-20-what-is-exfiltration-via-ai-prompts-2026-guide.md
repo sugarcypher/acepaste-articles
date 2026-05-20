@@ -7,7 +7,7 @@ lang: "en"
 source: babylovegrowth
 ---
 
-![Cybersecurity analyst reviews AI prompt exfiltration risks](https://csuxjmfbwmkxiegfpljm.supabase.co/storage/v1/object/public/blog-images/organization-32226/1779252603797_Cybersecurity-analyst-reviews-AI-prompt-exfiltration-risks.jpeg)
+![Cybersecurity analyst reviews AI prompt exfiltration risks](/assets/img/what-is-exfiltration-via-ai-prompts-2026-guide-1.jpg)
 
 Understanding what is exfiltration via AI prompts is no longer a theoretical exercise for security teams. Every time a developer pastes proprietary code into an AI assistant, or an analyst uploads a confidential report for summarization, a potential exfiltration channel opens. [AI data exfiltration](https://purplesec.us/resources/ai-security-glossary/data-exfiltration/) sits at the intersection of prompt injection and sensitive information disclosure, classified under OWASP LLM Top 10 categories LLM01 and LLM06. This article covers the mechanics, detection challenges, mitigation controls, and emerging vectors that security professionals need to understand in 2026.
 
