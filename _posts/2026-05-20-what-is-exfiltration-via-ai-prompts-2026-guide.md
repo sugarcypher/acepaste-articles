@@ -6,7 +6,6 @@ description: "Discover what is exfiltration via AI prompts in our 2026 guide. Le
 lang: "en"
 source: babylovegrowth
 ---
-# What Is Exfiltration via AI Prompts: 2026 Guide
 
 ![Cybersecurity analyst reviews AI prompt exfiltration risks](https://csuxjmfbwmkxiegfpljm.supabase.co/storage/v1/object/public/blog-images/organization-32226/1779252603797_Cybersecurity-analyst-reviews-AI-prompt-exfiltration-risks.jpeg)
 
