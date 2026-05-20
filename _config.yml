@@ -1,0 +1,8 @@
+title: AcePaste Articles
+description: >-
+  Guides on clean text, formatting, and invisible-character hygiene.
+theme: minima
+permalink: /:title/
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
