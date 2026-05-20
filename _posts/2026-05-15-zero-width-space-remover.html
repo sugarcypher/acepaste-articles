@@ -1,0 +1,73 @@
+---
+layout: post
+title: "Zero-Width Space Was Built for Typography. It Now Carries Watermarks, Bits, and Injection Markers."
+date: 2026-05-15 12:00:00 +0000
+description: "Zero-width characters (U+200B, U+200C, U+200D, U+FEFF, U+2060) survive copy-paste and carry watermarks, steganographic bits, and prompt-injection markers. Strip them at the clipboard with context awareness — not blanket removal."
+author: B. Greenway
+---
+<p class="byline">By B. Greenway · ThinkWell Labs · <a href="https://twl.today" rel="noopener" target="_blank">twl.today</a></p>
+
+<p>The zero-width space was added to Unicode 1.1 in 1993 to solve a problem that did not exist in English. Asian scripts &mdash; Chinese, Japanese, Thai, Khmer &mdash; write words without separating them with visible spaces, so a line-break engine has no obvious place to wrap a line. ZWSP, code point U+200B, was the typographic answer: an invisible character that signals to a renderer where a line break is permitted, but adds no visible gap and no extra width to the rendered text. It is, by specification, semantically empty and visually absent.</p>
+<p>Thirty-three years later, &ldquo;semantically empty and visually absent&rdquo; describes the perfect carrier for content the writer does not want the reader to see.</p>
+
+<h2>The family</h2>
+<p>The zero-width characters are not one code point but a small family with overlapping behavior and very different histories.</p>
+<p><code>U+200B</code> ZERO WIDTH SPACE &mdash; the line-break marker, 1993. <code>U+200C</code> ZERO WIDTH NON-JOINER &mdash; also 1993, prevents ligature formation in scripts like Persian and Urdu where joining behavior is contextual. <code>U+200D</code> ZERO WIDTH JOINER &mdash; also 1993, forces joining; used heavily in modern emoji sequences and in Devanagari for half-letter forms. <code>U+FEFF</code> BYTE ORDER MARK &mdash; originally a stream-direction marker, also pressed into service as &ldquo;zero-width no-break space&rdquo; until that role was formally withdrawn in Unicode 3.2 in 2002 and replaced by <code>U+2060</code>. <code>U+2060</code> WORD JOINER &mdash; the explicit &ldquo;do not break here&rdquo; character that took over the deprecated mid-stream use of U+FEFF. <code>U+180E</code> MONGOLIAN VOWEL SEPARATOR &mdash; historically zero-width, reclassified in Unicode 6.3 in 2013 to have visible width in some contexts but still treated as invisible by many systems that have not updated their tables.</p>
+<p>Each was added to handle a real typographic or linguistic problem. None of them was added to carry data. All of them now do.</p>
+
+<h2>The legitimate-use trap</h2>
+<p>This is what makes the zero-width family harder to handle than the Plane 14 Tags block. Plane 14 was deprecated in 2008. No production system has used it for its original purpose in nearly two decades. Strip it from any text stream and nothing legitimate breaks.</p>
+<p>The zero-width characters are still in active legitimate use across a meaningful slice of the world&rsquo;s writing systems. Strip them blanket and you break:</p>
+<ul>
+  <li>Every multi-codepoint emoji that uses ZWJ to combine glyphs into a single rendered character.</li>
+  <li>Every word of Persian, Urdu, or Pashto rendered with ZWNJ where ligature suppression is grammatically required.</li>
+  <li>Every Devanagari half-letter formed with ZWJ.</li>
+  <li>Line-break opportunities in Chinese, Japanese, Thai, Khmer, and other scripts that do not separate words with visible spaces.</li>
+  <li>The byte-order signal at the start of UTF-encoded files, where U+FEFF still serves its original role.</li>
+</ul>
+<p>A sanitizer that strips zero-width characters indiscriminately is broken for a meaningful slice of the world&rsquo;s text. A sanitizer that does not strip them is broken for a different slice &mdash; the slice where invisible payloads ride into trusted contexts.</p>
+<p>The right answer is contextual. ZWJ between two emoji code points is legitimate; ZWJ between two Latin letters is not. ZWSP between a Chinese character and a Latin word is legitimate; ZWSP inside the middle of an English word is not. The rules are not difficult to write, but they have to actually be written. Most sanitizers do not write them.</p>
+
+<h2>What gets carried</h2>
+<p>Zero-width characters carry data in three distinct ways, each with its own production track record.</p>
+<p><em>Watermarking.</em> Insert one ZWSP at the end of paragraph one, two ZWSPs at the end of paragraph two, three at paragraph three. The pattern encodes an identifier &mdash; a customer number, a document version, a user ID. The text reads identically to every recipient; the watermark is unique per copy. Leaked documents trace back to the leaker. Several enterprise document-management systems offer a variant of this technique as a feature, sold under the banner of leak-resistance. Anyone who copies a watermarked passage and pastes it elsewhere carries the identifier with them.</p>
+<p><em>Bit-level steganography.</em> Treat the presence or absence of a ZWSP at predictable positions as a binary signal. One hundred words of cover text can carry roughly one hundred bits of hidden payload. The technique is not new &mdash; academic work on whitespace steganography dates to at least the late 1990s &mdash; but it survives every visual review, every spell checker, and most automated content scanners. The cover text needs no modification beyond the inserted invisibles; the meaning of the visible content is preserved exactly.</p>
+<p><em>Tokenization disruption.</em> This is the failure mode that matters most for AI workflows. A ZWSP inserted between letters of a word causes most tokenizers to split the word into pieces it would not otherwise split. A model trained on the unsplit word sees a token sequence it has rarely or never seen. This is the technical core of the wave of &ldquo;AI text humanizer&rdquo; tools that surfaced through 2024 and 2025: insert zero-width characters between letters until the perplexity signature of the text no longer matches what a detector expects from a model. The visible English is unchanged. The underlying byte stream is altered to evade classification.</p>
+<p>The same mechanism, with a slightly different payload pattern, hides instruction markers. A prompt-injection attack does not need Plane 14 tag characters to evade visual review. A ZWSP-bracketed phrase in the middle of an otherwise innocuous paragraph can mark a region of text that a model parses differently from how a human reader expects it to be parsed.</p>
+
+<h2>Where this lands in production</h2>
+<p>Zero-width characters arrive in your text from sources you cannot fully audit:</p>
+<ul>
+  <li>Marketing copy from CMS systems that insert ZWSP for hyphenation control.</li>
+  <li>AI-generated content from &ldquo;humanizer&rdquo; wrappers that inject ZWSP between letters to evade detection.</li>
+  <li>Email signatures, particularly from corporate templates that include zero-width no-break space for line-break suppression in long titles and addresses.</li>
+  <li>Documents exported from word processors that preserve invisible artifacts from earlier edits.</li>
+  <li>Pasted citations and bibliography entries from reference managers.</li>
+  <li>Anything copied from a paywalled or watermarked source.</li>
+</ul>
+<p>Each of these is benign in isolation. Each carries a different invisible layer the recipient cannot see. When the recipient pastes the text into a language model &mdash; for a summary, a translation, a rewrite, a code generation, a customer-support response &mdash; the model receives the full byte sequence: the visible content plus every accumulated zero-width artifact from every prior stage of the document&rsquo;s history.</p>
+<p>The model does not know which artifacts are legitimate typographic markers and which are smuggled payloads. The user does not know they are there at all.</p>
+
+<h2>What does not work</h2>
+<p>Three common approaches fall short.</p>
+<p>NFKC normalization preserves zero-width characters because they are already in canonical form. The Unicode normalization forms &mdash; NFC, NFD, NFKC, NFKD &mdash; were designed to handle composed-versus-decomposed equivalence and compatibility decomposition. They were not designed to remove invisible payload carriers. Running normalization on a string containing ZWSP returns a string containing ZWSP.</p>
+<p>Regex-based stripping of <code>[\u200B-\u200D]</code> removes all three primary members of the family without distinguishing legitimate from illegitimate use. It breaks emoji ZWJ sequences, breaks Persian and Urdu ligature suppression, breaks Devanagari rendering, and breaks Chinese, Japanese, and Thai line-break opportunities. It also misses U+FEFF, U+2060, and U+180E, all of which carry the same risk profile.</p>
+<p>Whitespace collapse &mdash; replacing runs of whitespace with single spaces &mdash; does not touch zero-width characters at all. They are not whitespace; they have no width to collapse. The Unicode property <code>White_Space</code> is false for every member of the zero-width family.</p>
+
+<h2>What does work</h2>
+<p>Context-aware sanitization. Strip ZWSP between Latin letters but preserve it between scripts that legitimately use it. Strip ZWJ between non-emoji codepoints but preserve it within emoji sequences and within the scripts that depend on it. Strip U+FEFF in mid-stream positions but preserve it at the start of UTF-encoded files where it serves as a byte-order signal. Strip U+2060 in any context where word joining is not semantically required. Surface every finding by code point and class, with a severity rating that reflects the context, not just the codepoint.</p>
+<p>This is the work AcePaste Cleaner Pro does on every paste. Each zero-width character is inspected in the context of the characters surrounding it. Latin-script context with mid-word ZWSP: stripped, flagged. Emoji sequence with ZWJ: preserved, noted. Persian word with ZWNJ between letters that require disjoining: preserved. The cleaning report tells you what was there, what was removed, what was kept, and why.</p>
+
+<h2>The standing problem</h2>
+<p>Zero-width characters are not going away. They are required infrastructure for a large fraction of human written language. They will continue to appear in legitimate content. They will continue to be available as carriers for watermarks, steganographic payloads, and injection markers, because their fundamental property &mdash; semantically present and visually absent &mdash; is the same property that makes them useful for both purposes. The defense cannot be at the character layer alone, because the character layer cannot tell legitimate from illegitimate use without context.</p>
+<p>The defense has to live at the boundary between untrusted text and trusted context. The clipboard, the paste, the moment text crosses from one application that may not have checked it into another application that will treat it as input. Strip there, with context, or accept that everything downstream is processing bytes the user did not see.</p>
+
+<aside class="post-cta">
+  <p><strong>Try it now.</strong> Paste any text into <a href="https://acepaste.xyz/">AcePaste Cleaner Pro</a> &mdash; every zero-width character is surfaced by code point and class, with context-aware stripping that preserves what your text legitimately requires and removes what it does not.</p>
+</aside>
+
+<hr class="bio-rule">
+<p class="series-note">This is the third post in our series on invisible Unicode as security surface. The pillar essay is <a href="/invisible-text-llm/">The Invisible Text You&rsquo;re Pasting Into Your LLM</a>; the second post was <a href="/plane-14-tag-character-prompt-injection/">Plane 14 Was Supposed to Tag Languages. It Smuggles Instructions Instead.</a> The next post examines bidirectional override characters and what the Trojan Source CVE looks like when the target is an LLM rather than a compiler.</p>
+<br>
+<p class="bio">I write, research, analyze, and build systems at twl.today, with a focus on cognitive and technical attack surfaces in sociotechnical systems &mdash; the seams where human attention, machine processing, and invisible mechanisms diverge.</p>
+<p class="bio-sign">— B. Greenway</p>
