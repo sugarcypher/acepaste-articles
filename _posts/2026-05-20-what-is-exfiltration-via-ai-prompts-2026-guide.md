@@ -4,7 +4,6 @@ title: "What Is Exfiltration via AI Prompts: 2026 Guide"
 date: 2026-05-20 12:00:00 +0000
 description: "Discover what is exfiltration via AI prompts in our 2026 guide. Learn how to detect, mitigate, and understand this emerging security threat."
 lang: "en"
-source: babylovegrowth
 ---
 
 ![Cybersecurity analyst reviews AI prompt exfiltration risks](/assets/img/what-is-exfiltration-via-ai-prompts-2026-guide-1.jpg)
